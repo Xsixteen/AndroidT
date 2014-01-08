@@ -8,9 +8,17 @@
 	$con = mysql_connect("localhost", "arduinot", "6AApjDjf") or die(mysql_error());
 	mysql_select_db("arduinot") or die(mysql_error());
 
-	if (!mysql_query("INSERT INTO temperature VALUES($temp, NOW())")) {
-		die('Error: ' . mysql_error());
-	}
+	if(isset($o)) {
+		//Handle read request
+		$result = mysql_query("SELECT * FROM temperature") or die('Error: ' . mysql_error());
+		
+		echo json_encode($result);
 	
-	echo "OK";
+	} else {
+		if (!mysql_query("INSERT INTO temperature VALUES($temp, NOW())")) {
+			die('Error: ' . mysql_error());
+		}
+	
+		echo "OK";
+	}
 ?>
