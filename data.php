@@ -1,7 +1,10 @@
 <?php
 	$o    = $_GET['o'];
 	$temp = $_GET['TEMP'];
-
+	
+	if(!isset($o) || !isset($temp)) {
+		die();
+	}
 	//Set the timezone.
 	date_default_timezone_set('America/Detroit');
 
@@ -10,7 +13,7 @@
 
 	if(isset($o)) {
 		//Handle read request
-		$result = mysql_query("SELECT * FROM temperature") or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT * FROM temperature", $con) or die('Error: ' . mysql_error());
 		
 		echo json_encode($result);
 	
