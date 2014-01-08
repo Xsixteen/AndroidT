@@ -2,7 +2,7 @@
 	$o    = $_GET['o'];
 	$temp = $_GET['TEMP'];
 	
-	if(!isset($o) || !isset($temp)) {
+	if(!isset($o) && !isset($temp)) {
 		die();
 	}
 	//Set the timezone.
@@ -15,7 +15,7 @@
 		//Handle read request
 		$result = mysql_query("SELECT * FROM temperature", $con) or die('Error: ' . mysql_error());
 		
-		echo json_encode($result);
+		echo json_encode(mysql_fetch_assoc($result));
 	
 	} else {
 		if (!mysql_query("INSERT INTO temperature VALUES($temp, NOW())")) {
