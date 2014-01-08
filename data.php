@@ -2,6 +2,8 @@
 	$o    = $_GET['o'];
 	$temp = $_GET['TEMP'];
 
+	//Set the timezone.
+	date_default_timezone_set('America/Detroit');
 
 	$con = mysql_connect("localhost", "arduinot", "6AApjDjf") or die(mysql_error());
 	mysql_select_db("arduinot") or die(mysql_error());
