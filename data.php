@@ -6,7 +6,7 @@
 	$con = mysql_connect("localhost", "arduinot", "6AApjDjf") or die(mysql_error());
 	mysql_select_db("arduinot") or die(mysql_error());
 
-	if (!mysql_query("INSERT INTO temperature VALUES($temp)")) {
+	if (!mysql_query("INSERT INTO temperature VALUES($temp, NOW())")) {
 		die('Error: ' . mysql_error());
 	}
 	
