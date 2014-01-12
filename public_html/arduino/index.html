@@ -25,13 +25,25 @@
 	$(function () {
 		$.ajax({ 
 			dataType: "json",	
-			url: "http://162.243.16.158/arduinodata.php?o=true",
+			url: "http://162.243.16.158/arduino/data.php?o=true",
 			success: function(data) {
+				var r_temp = [];
+				var r_time = [];
+
+				$.each(data, function(js) {
+					r_temp.push(data[js].Temp);
+					r_time.push(data[js].Time);
+					
+				});
+
 				$('#container').highcharts({
 					title: {
 						text: 'Recorded Temperatures'
 					},
-					series: [data]
+					xAxis: {
+						categories: r_time;
+					},
+					series: r_temp
 				});
 
 			}
