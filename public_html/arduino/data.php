@@ -1,7 +1,8 @@
 <?php
 	$o    = $_GET['o'];
 	$temp = $_GET['TEMP'];
-	
+	$stack = array();
+
 	if(!isset($o) && !isset($temp)) {
 		die();
 	}
@@ -14,8 +15,10 @@
 	if(isset($o)) {
 		//Handle read request
 		$result = mysql_query("SELECT * FROM temperature", $con) or die('Error: ' . mysql_error());
-		
-		echo json_encode(mysql_fetch_assoc($result));
+		while($row = mysql_fetch_assoc($result)) {
+			array_push($stack, $row);
+		}
+		echo json_encode($stack);
 	
 	} else {
 		if (!mysql_query("INSERT INTO temperature VALUES($temp, NOW())")) {
