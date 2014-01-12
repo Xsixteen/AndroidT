@@ -31,7 +31,7 @@
 				var r_time = [];
 
 				$.each(data, function(js) {
-					r_temp.push(data[js].Temp);
+					r_temp.push(parseInt(data[js].Temp));
 					r_time.push(data[js].Time);
 					
 				});
@@ -43,7 +43,7 @@
 					xAxis: {
 						categories: r_time
 					},
-					series: r_temp
+					series: [{ name: 'Temp in Deg F', data: r_temp }]
 				});
 
 			}
