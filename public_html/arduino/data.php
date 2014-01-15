@@ -15,7 +15,7 @@
 	if($o == "ts") {
 		$result = mysql_query("SELECT Time FROM temperature", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
-			array_push($stack, date("n-d-hA",$row);
+			array_push($stack, date('n-j \a\t ha',strtotime($row["Time"])));
 		}
 		echo json_encode($stack);
 		

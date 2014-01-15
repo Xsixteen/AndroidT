@@ -23,6 +23,19 @@
     <script src="js/highcharts.js"></script>
     <script type="text/javascript">
 	$(function () {
+		var r_time = [];
+		$.ajax({ 
+			dataType: "json",	
+			url: "http://162.243.16.158/arduino/data.php?o=ts",
+			success: function(data) {
+				$.each(data, function(js) {
+					r_time.push(data[js]);
+				});
+
+
+				}
+		});
+
 		$.ajax({ 
 			dataType: "json",	
 			url: "http://162.243.16.158/arduino/data.php?o=true",
@@ -32,7 +45,7 @@
 
 				$.each(data, function(js) {
 					r_temp.push(parseInt(data[js].Temp));
-					r_time.push(data[js].Time);
+		//			r_time.push(data[js].Time);
 					
 				});
 
