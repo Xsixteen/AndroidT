@@ -39,7 +39,6 @@
 					url: "http://162.243.16.158/arduino/data.php?o=true",
 					success: function(data) {
 						var r_temp = [];
-						var r_time = [];
 
 						$.each(data, function(js) {
 							r_temp.push(parseInt(data[js].Temp));
