@@ -12,7 +12,14 @@
 	$con = mysql_connect("localhost", "arduinot", "6AApjDjf") or die(mysql_error());
 	mysql_select_db("arduinot") or die(mysql_error());
 
-	if(isset($o)) {
+	if($o == "ts") {
+		$result = mysql_query("SELECT Time FROM temperature", $con) or die('Error: ' . mysql_error());
+		while($row = mysql_fetch_assoc($result)) {
+			array_push($stack, date("n-d-hA",$row);
+		}
+		echo json_encode($stack);
+		
+	} else if(isset($o)) {
 		//Handle read request
 		$result = mysql_query("SELECT * FROM temperature", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
