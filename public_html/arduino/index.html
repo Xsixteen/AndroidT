@@ -14,7 +14,7 @@
     <![endif]-->
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <h1>Home Temperature Report</h1>
     <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://code.jquery.com/jquery.js"></script>
@@ -33,33 +33,35 @@
 				});
 
 
+
+				$.ajax({ 
+					dataType: "json",	
+					url: "http://162.243.16.158/arduino/data.php?o=true",
+					success: function(data) {
+						var r_temp = [];
+						var r_time = [];
+
+						$.each(data, function(js) {
+							r_temp.push(parseInt(data[js].Temp));
+							
+						});
+
+						$('#container').highcharts({
+							title: {
+								text: 'Recorded Temperatures'
+							},
+							xAxis: {
+								categories: r_time,
+								labels: {
+									step: 24
+								}
+							},
+							series: [{ name: 'Temp in Deg F', data: r_temp }]
+						});
+
+					}
+				});
 				}
-		});
-
-		$.ajax({ 
-			dataType: "json",	
-			url: "http://162.243.16.158/arduino/data.php?o=true",
-			success: function(data) {
-				var r_temp = [];
-				var r_time = [];
-
-				$.each(data, function(js) {
-					r_temp.push(parseInt(data[js].Temp));
-		//			r_time.push(data[js].Time);
-					
-				});
-
-				$('#container').highcharts({
-					title: {
-						text: 'Recorded Temperatures'
-					},
-					xAxis: {
-						categories: r_time
-					},
-					series: [{ name: 'Temp in Deg F', data: r_temp }]
-				});
-
-			}
 		});
 	});
     </script>
