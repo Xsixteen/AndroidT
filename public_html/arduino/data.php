@@ -25,7 +25,9 @@
 		//Handle read request
 		$result = mysql_query("SELECT * FROM temperature WHERE Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
-			array_push($stack, $row);
+			$pre["Time"] = date('n-j \a\t ga',strtotime($row["Time"]));
+			$pre["Temp"] = $row["Temp"];
+			array_push($stack, $pre);
 		}
 		echo json_encode($stack);
 	} else if(isset($o)) {
@@ -37,7 +39,7 @@
 		echo json_encode($stack);
 	
 	} else {
-		if (!mysql_query("INSERT INTO temperature VALUES($temp, NOW())")) {
+		if (!mysql_query("INSERT INTO temperature (Temp, Time) VALUES($temp, NOW())")) {
 			die('Error: ' . mysql_error());
 		}
 	
