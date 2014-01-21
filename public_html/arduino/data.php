@@ -19,6 +19,15 @@
 		}
 		echo json_encode($stack);
 		
+	} else if($o == "24h")) {
+		$now = strtotime();
+		$yesterday = strtotime("-1 day");
+		//Handle read request
+		$result = mysql_query("SELECT * FROM temperature WHERE Time BETWEEN $yesterday AND $now", $con) or die('Error: ' . mysql_error());
+		while($row = mysql_fetch_assoc($result)) {
+			array_push($stack, $row);
+		}
+		echo json_encode($stack);
 	} else if(isset($o)) {
 		//Handle read request
 		$result = mysql_query("SELECT * FROM temperature", $con) or die('Error: ' . mysql_error());
