@@ -37,6 +37,7 @@
 	</div>
 	<div class="container">
 	    <h1>Home Temperature Report</h1>
+	    <div id="24h" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	    <div id="graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	    <script src="https://code.jquery.com/jquery.js"></script>
@@ -46,6 +47,37 @@
 	    <script type="text/javascript">
 		$(function () {
 			var r_time = [];
+			mkCharts("24h", "24h");
+			function mkCharts(el, params) {
+				$.ajax({ 
+					dataType: "json",	
+					url: "http://162.243.16.158/arduino/data.php?o="+params,
+					success: function(data) {
+						var r_temp = [];
+						var r_time = [];
+
+						$.each(data, function(js) {
+							r_temp.push(parseInt(data[js].Temp));
+							r_time.push(parseInt(data[js].Time));
+							
+						});
+
+						$('#'+el).highcharts({
+							title: {
+								text: 'Recorded Temperatures'
+							},
+							xAxis: {
+								categories: r_time,
+								labels: {
+								}
+							},
+							series: [{ name: 'Temp in Deg F', data: r_temp }]
+						});
+
+					}
+				});
+					
+			}
 			$.ajax({ 
 				dataType: "json",	
 				url: "http://162.243.16.158/arduino/data.php?o=ts",
