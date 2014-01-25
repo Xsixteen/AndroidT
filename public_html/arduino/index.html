@@ -40,8 +40,13 @@
 	    <br><br>
 	    <div class="alert alert-success"><b>Max Temp</b> <div id="24hmax"></div>  <b>Min Temp</b> <div id="24hmin"></div></div>
 	    </p>
+
 	    <p><h2>2 Week Temperature Report</h2>
 	    <div id="graph" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	    <br><br>
+	    <div class="alert alert-success"><b>Max Temp</b> <div id="2wkmax"></div>  <b>Min Temp</b> <div id="2wkmin"></div></div>
+	    </p>
+
 	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	    <script src="https://code.jquery.com/jquery.js"></script>
 	    <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -50,12 +55,23 @@
 	    <script type="text/javascript">
 		$(function () {
 			var r_time = [];
+
 			$.ajax({ 
 				dataType: "json",	
 				url: "http://162.243.16.158/arduino/data.php?o=24hstats",
 				success: function(data) {
 					$("#24hmax").text(data.temp_max);
 					$("#24hmin").text(data.temp_min);
+					
+				}
+			});
+
+			$.ajax({ 
+				dataType: "json",	
+				url: "http://162.243.16.158/arduino/data.php?o=2wkstats",
+				success: function(data) {
+					$("#2wkmax").text(data.temp_max);
+					$("#2wkmin").text(data.temp_min);
 					
 				}
 			});
