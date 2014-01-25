@@ -36,20 +36,22 @@
 		$now = date("Y-m-d H:m:s", strtotime("now"));
 		$yesterday = date("Y-m-d H:m:s", strtotime("-1 day"));
 		//Handle read request
-		$result = mysql_query("SELECT MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$stack["temp_max"] = $row["temp_max"];
 			$stack["temp_min"] = $row["temp_min"];
+			$stack["temp_avg"] = $row["temp_avg"];
 		}
 		echo json_encode($stack);
 	} else if($o == "2wkstats") {
 		$now = date("Y-m-d H:m:s", strtotime("now"));
 		$twoweeks = date("Y-m-d H:m:s", strtotime("-2 weeks"));
 		//Handle read request
-		$result = mysql_query("SELECT MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$stack["temp_max"] = $row["temp_max"];
 			$stack["temp_min"] = $row["temp_min"];
+			$stack["temp_avg"] = $row["temp_avg"];
 		}
 		echo json_encode($stack);
 	} else if(isset($o)) {
