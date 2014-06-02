@@ -54,6 +54,24 @@
 			$stack["temp_avg"] = $row["temp_avg"];
 		}
 		echo json_encode($stack);
+	} else if($o == "monthstats") {
+		$month_avg	= array();
+		
+		for($i = 1; $i <= 12; $i++) {
+			$month_start      = date("Y-m-d H:m:s", mktime(0,0,0, $i, 1, date("Y")));
+			$month_end	  = date("Y-m-d H:m:s", mktime(0,0,0, $i, date("t"), date("Y")));
+
+			$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$month_end' AND Time >= '$month_start'", $con) or die('Error: ' . mysql_error());
+			while($row = mysql_fetch_assoc($result)) {
+				$stack["month"]    = $i;
+				$stack["temp_max"] = $row["temp_max"];
+				$stack["temp_min"] = $row["temp_min"];
+				$stack["temp_avg"] = $row["temp_avg"];
+				array_push($month_avg, $stack);	
+			}
+		}
+		echo json_encode($month_avg);
+		
 	} else if(isset($o)) {
 		//Handle read request
 		$now      = date("Y-m-d H:m:s", strtotime("now"));
