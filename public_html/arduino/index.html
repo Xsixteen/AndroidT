@@ -47,6 +47,11 @@
 	    <div class="alert alert-success"><b>Max Temp</b> <div id="2wkmax"></div>  <b>Min Temp</b> <div id="2wkmin"></div> <b>Average Temp</b> <div id="2wkavg"></div></div>
 	    </p>
 
+	    <p><h2>Average Monthly Temperature Report</h2>
+	    <div id="avg" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	    <br><br>
+	    </p>
+
 	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	    <script src="https://code.jquery.com/jquery.js"></script>
 	    <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -108,6 +113,47 @@
 					}
 				});
 					
+			}
+
+			mkStacked("avg", "monthstats");
+			function mkStacked(el, params) {
+				$.ajax({ 
+					dataType: "json",	
+					url: "http://162.243.16.158/arduino/data.php?o="+params,
+					success: function(data) {
+						var r_temp_max = [];
+						var r_temp_min = [];
+						var r_temp_avg = [];
+						var r_month = [];
+
+						$.each(data, function(js) {
+							r_temp_max.push(parseInt(data[js].temp_max));
+							r_temp_min.push(parseInt(data[js].temp_min));
+							r_temp_avg.push(parseInt(data[js].temp_avg));
+							r_month.push(data[js].month);
+							
+						});
+
+						$('#'+el).highcharts({
+							chart: {
+								type: 'column'
+							},
+							title: {
+								text: 'Recorded Temperatures'
+							},
+							xAxis: {
+								categories: r_month,
+							},
+							series: [
+								{ name: 'Max', data: r_temp_max },
+								{ name: 'Avg', data: r_temp_avg },
+								{ name: 'Min', data: r_temp_min }
+							]
+						});
+
+					}
+				});
+
 			}
 			$.ajax({ 
 				dataType: "json",	

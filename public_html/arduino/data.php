@@ -63,7 +63,7 @@
 
 			$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$month_end' AND Time >= '$month_start'", $con) or die('Error: ' . mysql_error());
 			while($row = mysql_fetch_assoc($result)) {
-				$stack["month"]    = $i;
+				$stack["month"]    = date("F", mktime(0,0,0, $i, 1, date("Y")));
 				$stack["temp_max"] = $row["temp_max"];
 				$stack["temp_min"] = $row["temp_min"];
 				$stack["temp_avg"] = $row["temp_avg"];
