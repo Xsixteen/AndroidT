@@ -72,6 +72,13 @@
 		}
 		echo json_encode($month_avg);
 		
+	} else if($o =="last") {
+		$result = mysql_query("SELECT * FROM temperature ORDER BY tID DESC LIMIT 1");
+		while($row = mysql_fetch_assoc($result)) {
+			array_push($stack, $row);
+		}
+		echo json_encode($stack);
+		
 	} else if(isset($o)) {
 		//Handle read request
 		$now      = date("Y-m-d H:m:s", strtotime("now"));
