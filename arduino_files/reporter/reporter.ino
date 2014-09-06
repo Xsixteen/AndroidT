@@ -106,43 +106,43 @@ void report()
   time = millis();
 
 //report every 60 mins
-if(ntime < time ) {
-  Serial.println("Getting Ready to Transmit:");
-  Serial.println("Temperature is read at: ");
-  Serial.println(readTmp());
-  ntime = 3600000 + time; //do it for an hour later.
-  Serial.println(time);
-  Serial.println(ntime);
-    if(client.connect(site,80)){
-            Serial.println("connected");
-            // Make a HTTP request:
-            client.print("GET /arduino/data.php?TEMP=");
-            client.println(readTmp());
-            Serial.println("Should be Sent");
-            client.println();
-            client.stop();
-    }
-}
+  if(ntime < time ) {
+    Serial.println("Getting Ready to Transmit:");
+    Serial.println("Temperature is read at: ");
+    Serial.println(readTmp());
+    ntime = 3600000 + time; //do it for an hour later.
+    Serial.println(time);
+    Serial.println(ntime);
+      if(client.connect(site,80)){
+              Serial.println("connected");
+              // Make a HTTP request:
+              client.print("GET /arduino/data.php?TEMP=");
+              client.println(readTmp());
+              Serial.println("Should be Sent");
+              client.println();
+              client.stop();
+      }
+  }
 }
 
 float readVolt()
 {
-  const int sensorPin = 0;
- //getting the voltage reading from the temperature sensor
- int reading = analogRead(sensorPin);  
- 
- // converting that reading to voltage, for 3.3v arduino use 3.3
- float voltage = reading * 5.0;
- voltage /= 1024.0;
- return voltage; 
+   const int sensorPin = 0;
+   //getting the voltage reading from the temperature sensor
+   int reading = analogRead(sensorPin);  
+   
+   // converting that reading to voltage, for 3.3v arduino use 3.3
+   float voltage = reading * 5.0;
+   voltage /= 1024.0;
+   return voltage; 
 }
 
 
 float readTmp()
 {
-  float voltage = readVolt();
-  float temperatureC = (voltage - 0.5) * 100; 
-  return ((temperatureC * 9.0 / 5.0) + 32.0);
+    float voltage = readVolt();
+    float temperatureC = (voltage - 0.5) * 100; 
+    return ((temperatureC * 9.0 / 5.0) + 32.0);
 }
   
   
