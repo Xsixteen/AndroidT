@@ -90,7 +90,7 @@
 		echo json_encode($stack);
 	
 	} else {
-		if (!mysql_query("INSERT INTO temperature (Temp, Time) VALUES($temp, NOW())")) {
+		if (!mysql_query("INSERT INTO temperature (Temp, Time, RemoteNum) VALUES($temp, NOW(), 0)")) {
 			die('Error: ' . mysql_error());
 		}
 	
