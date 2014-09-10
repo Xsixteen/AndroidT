@@ -14,6 +14,7 @@ Based on example by:
 
 #include <SPI.h>
 #include <Ethernet.h>
+#include <SoftwareSerial.h>
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
@@ -32,11 +33,15 @@ EthernetServer localserver(8080);
 // that you want to connect to (port 80 is default for HTTP):
 EthernetClient client, servC;
 
+//XBEE Module
+SoftwareSerial xBee = SoftwareSerial(2,3);
+
 void setup() {
 
   // start the Ethernet connection:
   Ethernet.begin(mac, ip);
   Serial.begin(9600);
+  xBee.begin(9600);
   localserver.begin();
   //  analogReference(EXTERNAL); use if 3.3 V
   ntime = 1000*10; // have the first report in 10 seconds.
@@ -49,8 +54,10 @@ void loop()
 
           
    //Report Temperature Data to the Server
-   report();
+   localReport();
    
+   //Check if Remote reporter has data
+   goXbeeReceive();
    
    //or else do server stuff as well -- like printing infos!
    servC = localserver.available();
@@ -100,8 +107,37 @@ void loop()
   
 }
 
+
+void goXbeeReceive() {
+  if(xBee.available()) {
+        String rcvdTemp = String(xBee.read());  
+        remoteReport(rcvdTemp);
+    }
+  }
+
+void remoteReport(String recordTemp) {
+    String reporterID = "1"; //take as a param if more than 1 reporter.
+    //report whenever a transmission is received
+    Serial.println("Getting Ready to Transmit:");
+    Serial.println("Temperature is read at: ");
+    Serial.println(recordTemp);
+      if(client.connect(site,80)){
+              Serial.println("connected");
+              
+              
+              // Make a HTTP request:
+              //TODO: Add a remote report flag
+              client.println("GET /arduino/data.php?TEMP="+recordTemp+"&rptID="+reporterID);
+              
+              Serial.println("Should be Sent");
+              client.println();
+              client.stop();
+      }
+}
+
+
 //Check if it's time to transmit a reading to the server.  If so report it.
-void report()
+void localReport()
 {
   time = millis();
 

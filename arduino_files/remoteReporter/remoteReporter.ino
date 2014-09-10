@@ -1,11 +1,13 @@
+#include <SoftwareSerial.h>
+
 /*
   remotereporter - This devices job is to remotely collect data and transmit it
   back to the central reporter to save to the server.
 */
 
-  #include <NewSoftSerial.h>
+  #include <SoftwareSerial.h>
 
-  NewSoftSerial xBee = NewSoftSerial(2,3);
+  SoftwareSerial xBee = SoftwareSerial(2,3);
 
   unsigned long time, ntime=0;
 
@@ -19,7 +21,7 @@
   //looping point of execution.  Periodically check the sensors.  Then report out to the XBEE
   void loop()
   {
-   
+    report();
   }
   
   void report()
@@ -36,18 +38,12 @@
   }
   
   void goXbeeTransmit() {
-    String PREAMBLE = “PREAMBLE”;
-    String ACK   = “ACK”;
-    
-    xBee.println(PREAMBLE);
-    if(String(xBee.read()).equals(ACK)) {
       xBee.println(readTmp());
-    }
   }
 
   float readVolt()
   {
-   const int sensorPin = 0;
+   const int sensorPin = 5;
    //getting the voltage reading from the temperature sensor
    int reading = analogRead(sensorPin);  
    

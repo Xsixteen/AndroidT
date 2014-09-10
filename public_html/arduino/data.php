@@ -2,6 +2,7 @@
 	$o    = $_GET['o'];
 	$temp = $_GET['TEMP'];
 	$stack = array();
+	$rptID = $_GET['rptID'];
 
 	if(!isset($o) && !isset($temp)) {
 		die();
@@ -90,10 +91,14 @@
 		echo json_encode($stack);
 	
 	} else {
-		if (!mysql_query("INSERT INTO temperature (Temp, Time, RemoteNum) VALUES($temp, NOW(), 0)")) {
+		if(!isset($rptID)) {
+			$rptID = 0;	
+		}
+		if (!mysql_query("INSERT INTO temperature (Temp, Time, RemoteNum) VALUES($temp, NOW(), $rptID)")) {
 			die('Error: ' . mysql_error());
 		}
 	
 		echo "OK";
 	}
+
 ?>
