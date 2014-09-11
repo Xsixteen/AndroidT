@@ -7,6 +7,11 @@
 	if(!isset($o) && !isset($temp)) {
 		die();
 	}
+	
+	//By default if rptID is not set it is = 0
+	if(!isset($rptID)) {
+		$rptID = 0;	
+	}
 	//Set the timezone.
 	date_default_timezone_set('America/Detroit');
 
@@ -16,7 +21,7 @@
 	if($o == "ts") {
 		$now      = date("Y-m-d H:m:s", strtotime("now"));
 		$twoweeks = date("Y-m-d H:m:s", strtotime("-2 weeks"));
-		$result = mysql_query("SELECT Time FROM temperature WHERE Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT Time FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			array_push($stack, date('n-j \a\t ga',strtotime($row["Time"])));
 		}
@@ -26,7 +31,7 @@
 		$now = date("Y-m-d H:m:s", strtotime("now"));
 		$yesterday = date("Y-m-d H:m:s", strtotime("-1 day"));
 		//Handle read request
-		$result = mysql_query("SELECT * FROM temperature WHERE Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$pre["Time"] = date('n-j \a\t ga',strtotime($row["Time"]));
 			$pre["Temp"] = $row["Temp"];
@@ -37,7 +42,7 @@
 		$now = date("Y-m-d H:m:s", strtotime("now"));
 		$yesterday = date("Y-m-d H:m:s", strtotime("-1 day"));
 		//Handle read request
-		$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$stack["temp_max"] = $row["temp_max"];
 			$stack["temp_min"] = $row["temp_min"];
@@ -48,7 +53,7 @@
 		$now = date("Y-m-d H:m:s", strtotime("now"));
 		$twoweeks = date("Y-m-d H:m:s", strtotime("-2 weeks"));
 		//Handle read request
-		$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$stack["temp_max"] = $row["temp_max"];
 			$stack["temp_min"] = $row["temp_min"];
@@ -62,7 +67,7 @@
 			$month_start      = date("Y-m-d H:m:s", mktime(0,0,0, $i, 1, date("Y")));
 			$month_end	  = date("Y-m-d H:m:s", mktime(0,0,0, $i, date("t"), date("Y")));
 
-			$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE Time <= '$month_end' AND Time >= '$month_start'", $con) or die('Error: ' . mysql_error());
+			$result = mysql_query("SELECT AVG(Temp) AS temp_avg, MAX(Temp) AS temp_max, MIN(Temp) AS temp_min FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$month_end' AND Time >= '$month_start'", $con) or die('Error: ' . mysql_error());
 			while($row = mysql_fetch_assoc($result)) {
 			        $stack["month"]    = date("F", mktime(0,0,0, $i, 1, date("Y")));
                                 $stack["temp_max"] = ($row["temp_max"] == null ? 0 : $row["temp_max"]);
@@ -74,7 +79,7 @@
 		echo json_encode($month_avg);
 		
 	} else if($o =="last") {
-		$result = mysql_query("SELECT * FROM temperature ORDER BY tID DESC LIMIT 1");
+		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' ORDER BY tID DESC LIMIT 1");
 		while($row = mysql_fetch_assoc($result)) {
 			array_push($stack, $row);
 		}
@@ -84,16 +89,13 @@
 		//Handle read request
 		$now      = date("Y-m-d H:m:s", strtotime("now"));
 		$twoweeks = date("Y-m-d H:m:s", strtotime("-2 weeks"));
-		$result = mysql_query("SELECT * FROM temperature WHERE Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			array_push($stack, $row);
 		}
 		echo json_encode($stack);
 	
 	} else {
-		if(!isset($rptID)) {
-			$rptID = 0;	
-		}
 		if (!mysql_query("INSERT INTO temperature (Temp, Time, RemoteNum) VALUES($temp, NOW(), $rptID)")) {
 			die('Error: ' . mysql_error());
 		}
