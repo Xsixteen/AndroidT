@@ -109,14 +109,22 @@ void loop()
 
 
 void goXbeeReceive() {
-  if(xBee.available()) {
-        String rcvdTemp = String(xBee.read());  
-        remoteReport(rcvdTemp);
+  String message;
+  while (xBee.available()) {
+        byte rcvdTemp = xBee.read();
+    
+        if((char)rcvdTemp == '\r') {
+          remoteReport(message);
+        }
+        message = message + String((char)rcvdTemp);  
     }
+   
   }
 
 void remoteReport(String recordTemp) {
+    int index = 0;
     String reporterID = "1"; //take as a param if more than 1 reporter.
+    
     //report whenever a transmission is received
     Serial.println("Getting Ready to Transmit:");
     Serial.println("Temperature is read at: ");
@@ -127,7 +135,10 @@ void remoteReport(String recordTemp) {
               
               // Make a HTTP request:
               //TODO: Add a remote report flag
-              client.println("GET /arduino/data.php?TEMP="+recordTemp+"&rptID="+reporterID);
+              client.print("GET /arduino/data.php?TEMP=");
+              client.print(recordTemp);
+              client.print("&rptID=");
+              client.println(reporterID);
               
               Serial.println("Should be Sent");
               client.println();
