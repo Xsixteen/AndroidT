@@ -106,7 +106,9 @@
 			mkLineGraph("24h", "24h");
 			function mkLineGraph(el, params) {
 				var outdoorTemp= [];
-				var outdoorTime = [];
+				var indoorTemp= [];
+				var indoorTime = [];
+
 				$.ajax({ 
 					dataType: "json",       
 					url: "./data.php?o="+params+"&rptID=1",
@@ -115,7 +117,6 @@
 
 						$.each(data, function(js) {
 							outdoorTemp.push(parseInt(data[js].Temp));
-							outdoorTime.push(data[js].Time);
 						});     
 
 					}       
@@ -124,31 +125,32 @@
 				$.ajax({ 
 					dataType: "json",	
 					url: "./data.php?o="+params,
+					async: false,
 					success: function(data) {
 						var r_temp = [];
 						var r_time = [];
 
 						$.each(data, function(js) {
-							r_temp.push(parseInt(data[js].Temp));
-							r_time.push(data[js].Time);
+							indoorTemp.push(parseInt(data[js].Temp));
+							indoorTime.push(data[js].Time);
 							
 						});
 
-						$('#'+el).highcharts({
-							title: {
-								text: 'Recorded Temperatures'
-							},
-							xAxis: {
-								categories: r_time,
-								labels: {
-								}
-							},
-							series: [{ name: 'Temp in Deg F', data: r_temp }
-								,{ name: 'Outdoor Temp in Deg F', data: outdoorTemp }
-								]
-						});
-
 					}
+				});
+
+				$('#'+el).highcharts({
+					title: {
+						text: 'Recorded Temperatures'
+					},
+					xAxis: {
+						categories: indoorTime,
+						labels: {
+						}
+					},
+					series: [{ name: 'Temp in Deg F', data: indoorTemp }
+						,{ name: 'Outdoor Temp in Deg F', data: outdoorTemp }
+						]
 				});
 					
 			}
