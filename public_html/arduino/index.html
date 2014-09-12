@@ -52,7 +52,12 @@
 	    <div class="alert alert-success"><b>Max Temp</b> <div id="2wkmax"></div>  <b>Min Temp</b> <div id="2wkmin"></div> <b>Average Temp</b> <div id="2wkavg"></div></div>
 	    </p>
 
-	    <p><h2>Average Monthly Temperature Report</h2>
+	    <p><h2>Indoor vs Outdoor Average Monthly Temperature Report</h2>
+	    <div id="areaavg" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	    <br><br>
+	    </p>
+
+	    <p><h2>Indoor Average Monthly Temperature Report</h2>
 	    <div id="avg" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	    <br><br>
 	    </p>
@@ -70,6 +75,11 @@
 	    <script type="text/javascript">
 		$(function () {
 			var r_time = [];
+
+			mkLineGraph("24h", "24h");
+			mkStacked("avg", "monthstats");
+			mkStacked("outdooravg", "monthstats&rptID=1");
+			compareInvsOut("areaavg");
 
 			$.ajax({ 
 				dataType: "json",	
@@ -114,7 +124,6 @@
 				}
 			});
 
-			mkLineGraph("24h", "24h");
 			function mkLineGraph(el, params) {
 				var outdoorTemp= [];
 				var indoorTemp= [];
@@ -166,8 +175,6 @@
 					
 			}
 
-			mkStacked("avg", "monthstats");
-			mkStacked("outdooravg", "monthstats&rptID=1");
 			function mkStacked(el, params) {
 				$.ajax({ 
 					dataType: "json",	
@@ -210,6 +217,68 @@
 				});
 
 			}
+
+			function compareInvsOut(el) {
+				var indoor_temp_avg = [];
+				var outdoor_temp_avg = [];
+				var r_month = [];
+
+				//Indoor
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o=monthstats",
+					async: false,
+					success: function(data) {
+						$.each(data, function(js) {
+							indoor_temp_avg.push(parseInt(data[js].temp_avg));
+							r_month.push(data[js].month);
+							
+						});
+					}
+				});
+
+				//Outdoor
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o=monthstats&rptID=1",
+					async: false,
+					success: function(data) {
+						$.each(data, function(js) {
+							outdoor_temp_avg.push(parseInt(data[js].temp_avg));
+							
+						});
+					}
+				});
+
+				$('#'+el).highcharts({
+					chart: {
+						type: 'area'
+					},
+					plotOptions: {
+						area: {
+							marker: {
+								enabled: false,
+								radius: 2
+							}
+						}
+					},
+					title: {
+						text: 'Recorded Temperatures'
+					},
+					xAxis: {
+						categories: r_month,
+					},
+					yAxis: {
+						min: 50
+					},
+					series: [
+						{ name: 'Indoor Temperature', data: indoor_temp_avg },
+						{ name: 'Outdoor Temperature', data: outdoor_temp_avg },
+					]
+				});
+
+			}
+
 			$.ajax({ 
 				dataType: "json",	
 				url: "./data.php?o=ts",
