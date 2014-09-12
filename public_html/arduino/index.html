@@ -43,7 +43,8 @@
 	    <p><h2>24 Hour Temperature</h2>
 	    <div id="24h" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	    <br><br>
-	    <div class="alert alert-success"><b>Max Temp</b> <div id="24hmax"></div>  <b>Min Temp</b> <div id="24hmin"></div> <b>Average Temp</b> <div id="24havg"></div></div>
+	    <div class="alert alert-success">
+			<b>Indoor Max Temp</b> <div id="24hmax"></div>  <b>Indoor Min Temp</b> <div id="24hmin"></div> <b>Indoor Average Temp</b> <div id="24havg"></div></div>
 	    </p>
 
 	    <p><h2>2 Week Temperature Report</h2>
@@ -126,6 +127,7 @@
 
 			function mkLineGraph(el, params) {
 				var outdoorTemp= [];
+				var outdoorTime= [];
 				var indoorTemp= [];
 				var indoorTime = [];
 
@@ -137,6 +139,7 @@
 
 						$.each(data, function(js) {
 							outdoorTemp.push(parseInt(data[js].Temp));
+							outdoorTime.push(data[js].Time);
 						});     
 
 					}       
@@ -158,6 +161,14 @@
 
 					}
 				});
+				var j = 0;
+				for(i=0; i < indoorTime.length; i++) {
+					if(indoorTime[i] != outdoorTime[j]) {
+						outdoorTemp.splice(i, 0, null);
+					} else {
+						j++;
+					}	
+				}
 
 				$('#'+el).highcharts({
 					title: {
