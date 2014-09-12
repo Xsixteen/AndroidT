@@ -38,7 +38,8 @@
 	<div class="container">
 	    <h1>Home Temperature Report</h1>
 	    <p><h2>Last Recorded Temperatures</h2>
-	    <h3><div id="lastTemp"></div></h3>
+	    <h3><div id="lastTempIndoor"></div></h3>
+	    <h3><div id="lastTempOutdoor"></div></h3>
 	    <p><h2>24 Hour Temperature</h2>
 	    <div id="24h" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	    <br><br>
@@ -86,7 +87,17 @@
 				url: "./data.php?o=last",
 				success: function(data) {
 					var Time = data[0].Time;
-					$("#lastTemp").html("<span class='glyphicon glyphicon-info-sign'> " +  data[0].Temp + " deg F Recorded at " + Time.substring(10) +"</span>" );
+					$("#lastTempIndoor").html("<span class='glyphicon glyphicon-info-sign'> Indoor: " +  data[0].Temp + " deg F Recorded at " + Time.substring(10) +"</span>" );
+					
+				}
+			});
+
+			$.ajax({ 
+				dataType: "json",	
+				url: "./data.php?o=last&rptID=1",
+				success: function(data) {
+					var Time = data[0].Time;
+					$("#lastTempOutdoor").html("<span class='glyphicon glyphicon-info-sign'> Outdoor: " +  data[0].Temp + " deg F Recorded at " + Time.substring(10) +"</span>" );
 					
 				}
 			});
