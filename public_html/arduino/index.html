@@ -81,6 +81,7 @@
 			mkStacked("avg", "monthstats");
 			mkStacked("outdooravg", "monthstats&rptID=1");
 			compareInvsOut("areaavg");
+			create2Wk();
 
 			$.ajax({ 
 				dataType: "json",	
@@ -290,44 +291,78 @@
 
 			}
 
-			$.ajax({ 
-				dataType: "json",	
-				url: "./data.php?o=ts",
-				success: function(data) {
-					$.each(data, function(js) {
-						r_time.push(data[js]);
-					});
+			function create2Wk() {
+				var outdoor_temp = [];
+				var indoor_temp = [];
+				var outdoor_time = [];
+				var indoor_time = [];
+				var r_time = [];	
 
-
-
-					$.ajax({ 
-						dataType: "json",	
-						url: "./data.php?o=true",
-						success: function(data) {
-							var r_temp = [];
-
-							$.each(data, function(js) {
-								r_temp.push(parseInt(data[js].Temp));
-								
-							});
-
-							$('#graph').highcharts({
-								title: {
-									text: 'Recorded Temperatures'
-								},
-								xAxis: {
-									categories: r_time,
-									labels: {
-										step: 24
-									}
-								},
-								series: [{ name: 'Temp in Deg F', data: r_temp }]
-							});
-
-						}
-					});
+				//outdoor
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o=true&rptID=1",
+					async: false,
+					success: function(data) {
+						$.each(data, function(js) {
+							outdoor_temp.push(parseInt(data[js].Temp));
+							outdoor_time.push(data[js].Time);
+							
+						});
 					}
-			});
+				});
+
+				//indoor
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o=true",
+					async: false,
+					success: function(data) {
+						$.each(data, function(js) {
+							indoor_temp.push(parseInt(data[js].Temp));
+							indoor_time.push(data[js].Time);
+							
+						});
+					}
+				});
+				
+				//time
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o=ts",
+					async: false,
+					success: function(data) {
+						$.each(data, function(js) {
+							r_time.push(data[js]);
+						});
+					}
+				});
+
+				var j = 0;
+				for(i=0; i < indoor_time.length; i++) {
+					if(indoor_time[i] != outdoor_time[j]) {
+						outdoor_temp.splice(i, 0, null);
+					} else {
+						j++;
+					}	
+				}
+
+
+				$('#graph').highcharts({
+					title: {
+						text: 'Recorded Temperatures'
+					},
+					xAxis: {
+						categories: r_time,
+						labels: {
+							step: 24
+						}
+					},
+					series: [{ name: 'Temp in Deg F', data: indoor_temp },
+						 { name: 'Outdoor Temperature in Deg F', data: outdoor_temp }]
+				});
+
+			}
 		});
 	    </script>
 	</div>

@@ -91,7 +91,10 @@
 		$twoweeks = date("Y-m-d H:m:s", strtotime("-2 weeks"));
 		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
-			array_push($stack, $row);
+			$rowProcess["Temp"] = $row["Temp"];
+			$rowProcess["Time"] = date('n-j \a\t ga',strtotime($row["Time"]));
+			array_push($stack, $rowProcess);
+			 
 		}
 		echo json_encode($stack);
 	
