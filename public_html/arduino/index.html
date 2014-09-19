@@ -53,20 +53,21 @@
 	    <div class="alert alert-success"><b>Max Temp</b> <div id="2wkmax"></div>  <b>Min Temp</b> <div id="2wkmin"></div> <b>Average Temp</b> <div id="2wkavg"></div></div>
 	    </p>
 
-	    <p><h2>Indoor vs Outdoor Average Monthly Temperature Report</h2>
+	    <p><h2>Monthly Temperature Report</h2>
+	    <div id="month" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+	    <br><br>
+	    </p>
+
+	    <p><h2>Indoor vs Outdoor Average Monthly Area Chart</h2>
 	    <div id="areaavg" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	    <br><br>
 	    </p>
 
-	    <p><h2>Indoor Average Monthly Temperature Report</h2>
+	    <p><h2>Average Monthly Temperature Report</h2>
 	    <div id="avg" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 	    <br><br>
 	    </p>
 
-	    <p><h2>Outdoor Average Monthly Temperature Report</h2>
-	    <div id="outdooravg" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-	    <br><br>
-	    </p>
 
 	    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	    <script src="https://code.jquery.com/jquery.js"></script>
@@ -79,10 +80,10 @@
 
 			mkLineGraph("24h", "24h");
 			mkStacked("avg", "monthstats");
-			mkStacked("outdooravg", "monthstats&rptID=1");
-			compareInvsOut("areaavg");
-			create2Wk();
-
+			avgTempArea("areaavg");
+			create2Wk("graph");
+			monthlyArea("month");
+			
 			$.ajax({ 
 				dataType: "json",	
 				url: "./data.php?o=24hstats",
@@ -125,6 +126,83 @@
 					
 				}
 			});
+
+			function monthlyArea(el) {
+				var outdoor_temp = [];
+				var indoor_temp = [];
+				var outdoor_time = [];
+				var indoor_time = [];
+
+				//outdoor
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o=month&rptID=1",
+					async: false,
+					success: function(data) {
+						$.each(data, function(js) {
+							outdoor_temp.push(parseInt(data[js].Temp));
+							outdoor_time.push(data[js].Time);
+							
+						});
+					}
+				});
+
+				//indoor
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o=month",
+					async: false,
+					success: function(data) {
+						$.each(data, function(js) {
+							indoor_temp.push(parseInt(data[js].Temp));
+							indoor_time.push(data[js].Time);
+							
+						});
+					}
+				});
+				
+
+				var j = 0;
+				for(i=0; i < indoor_time.length; i++) {
+					if(indoor_time[i] != outdoor_time[j]) {
+						outdoor_temp.splice(i, 0, null);
+					} else {
+						j++;
+					}	
+				}
+
+
+				$('#'+el).highcharts({
+					chart: {
+						type: 'area'
+					},
+					plotOptions: {
+						area: {
+							marker: {
+								radius: 2,
+								enabled: false
+							}
+						}
+					},
+					title: {
+						text: 'Recorded Temperatures'
+					},
+					xAxis: {
+						categories: indoor_time,
+						labels: {
+							step:168 
+						}
+					},
+					yAxis: {
+						min: 50,
+						max: 90
+					},
+					series: [{ name: 'Temp in Deg F', data: indoor_temp },
+						 { name: 'Outdoor Temperature in Deg F', data: outdoor_temp }]
+				});
+
+
+			}
 
 			function mkLineGraph(el, params) {
 				var outdoorTemp= [];
@@ -188,14 +266,19 @@
 			}
 
 			function mkStacked(el, params) {
+				var r_temp_max = [];
+				var r_temp_min = [];
+				var r_temp_avg = [];
+				var r_month = [];
+				var r_outside_temp_max = [];
+				var r_outside_temp_min = [];
+				var r_outside_temp_avg = [];
+
 				$.ajax({ 
 					dataType: "json",	
 					url: "./data.php?o="+params,
+					async: false,
 					success: function(data) {
-						var r_temp_max = [];
-						var r_temp_min = [];
-						var r_temp_avg = [];
-						var r_month = [];
 
 						$.each(data, function(js) {
 							r_temp_max.push(parseInt(data[js].temp_max));
@@ -205,32 +288,53 @@
 							
 						});
 
-						$('#'+el).highcharts({
-							chart: {
-								type: 'column'
-							},
-							title: {
-								text: 'Recorded Temperatures'
-							},
-							xAxis: {
-								categories: r_month,
-							},
-							yAxis: {
-								min: 50
-							},
-							series: [
-								{ name: 'Max', data: r_temp_max },
-								{ name: 'Avg', data: r_temp_avg },
-								{ name: 'Min', data: r_temp_min }
-							]
-						});
 
 					}
 				});
 
+				$.ajax({ 
+					dataType: "json",	
+					url: "./data.php?o="+params+"&rptID=1",
+					async: false,
+					success: function(data) {
+
+						$.each(data, function(js) {
+							r_outside_temp_max.push(parseInt(data[js].temp_max));
+							r_outside_temp_min.push(parseInt(data[js].temp_min));
+							r_outside_temp_avg.push(parseInt(data[js].temp_avg));
+							
+						});
+
+
+					}
+				});
+
+				$('#'+el).highcharts({
+					chart: {
+						type: 'column'
+					},
+					title: {
+						text: 'Recorded Temperatures'
+					},
+					xAxis: {
+						categories: r_month,
+					},
+					yAxis: {
+						min: 50
+					},
+					series: [
+						{ name: 'Inside Max', data: r_temp_max, color:'#7cb5ec'},
+						{ name: 'Outside Max', data: r_outside_temp_max, color:'#434348'},
+						{ name: 'Inside Avg', data: r_temp_avg, color:'#7cb5ec'},
+						{ name: 'Outside Avg', data: r_outside_temp_avg, color:'#434348'},
+						{ name: 'Inside Min', data: r_temp_min, color:'#7cb5ec'},
+						{ name: 'Outside Min', data: r_outside_temp_min, color:'#434348'}
+					]
+				});
+
 			}
 
-			function compareInvsOut(el) {
+			function avgTempArea(el) {
 				var indoor_temp_avg = [];
 				var outdoor_temp_avg = [];
 				var r_month = [];
@@ -291,7 +395,7 @@
 
 			}
 
-			function create2Wk() {
+			function create2Wk(el) {
 				var outdoor_temp = [];
 				var indoor_temp = [];
 				var outdoor_time = [];
@@ -348,7 +452,7 @@
 				}
 
 
-				$('#graph').highcharts({
+				$('#'+el).highcharts({
 					chart: {
 						type: 'area'
 					},

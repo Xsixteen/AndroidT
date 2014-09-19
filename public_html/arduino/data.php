@@ -85,6 +85,17 @@
 		}
 		echo json_encode($stack);
 		
+	} else if($o == "month") {
+		//Handle read request
+		$now      = date("Y-m-d H:m:s", strtotime("now"));
+		$month = date("Y-m-d H:m:s", strtotime("-1 month"));
+		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$month'", $con) or die('Error: ' . mysql_error());
+		while($row = mysql_fetch_assoc($result)) {
+			$rowProcess["Temp"] = $row["Temp"];
+			$rowProcess["Time"] = date('n-j \a\t ga',strtotime($row["Time"]));
+			array_push($stack, $rowProcess);
+		}
+		echo json_encode($stack);
 	} else if(isset($o)) {
 		//Handle read request
 		$now      = date("Y-m-d H:m:s", strtotime("now"));
