@@ -349,6 +349,17 @@
 
 
 				$('#graph').highcharts({
+					chart: {
+						type: 'area'
+					},
+					plotOptions: {
+						area: {
+							marker: {
+								radius: 2,
+								enabled: false
+							}
+						}
+					},
 					title: {
 						text: 'Recorded Temperatures'
 					},
@@ -357,6 +368,10 @@
 						labels: {
 							step: 24
 						}
+					},
+					yAxis: {
+						min: 50,
+						max: 90
 					},
 					series: [{ name: 'Temp in Deg F', data: indoor_temp },
 						 { name: 'Outdoor Temperature in Deg F', data: outdoor_temp }]
