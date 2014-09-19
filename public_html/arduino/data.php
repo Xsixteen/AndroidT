@@ -28,8 +28,8 @@
 		echo json_encode($stack);
 		
 	} else if($o == "24h") {
-		$now = date("Y-m-d H:m:s", strtotime("now"));
-		$yesterday = date("Y-m-d H:m:s", strtotime("-1 day"));
+		$now = date("Y-m-d H", strtotime("now"));
+		$yesterday = date("Y-m-d H", strtotime("-1 day"));
 		//Handle read request
 		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
