@@ -19,8 +19,8 @@
 	mysql_select_db("arduinot") or die(mysql_error());
 
 	if($o == "ts") {
-		$now      = date("Y-m-d H:m:s", strtotime("now"));
-		$twoweeks = date("Y-m-d H:m:s", strtotime("-2 weeks"));
+		$now      = date("Y-m-d H", strtotime("now"));
+		$twoweeks = date("Y-m-d H", strtotime("-2 weeks"));
 		$result = mysql_query("SELECT Time FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			array_push($stack, date('n-j \a\t ga',strtotime($row["Time"])));
