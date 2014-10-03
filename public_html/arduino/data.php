@@ -98,8 +98,8 @@
 		echo json_encode($stack);
 	} else if(isset($o)) {
 		//Handle read request
-		$now      = date("Y-m-d H:m:s", strtotime("now"));
-		$twoweeks = date("Y-m-d H:m:s", strtotime("-2 weeks"));
+		$now      = date("Y-m-d H", strtotime("now"));
+		$twoweeks = date("Y-m-d H", strtotime("-2 weeks"));
 		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$rowProcess["Temp"] = $row["Temp"];
