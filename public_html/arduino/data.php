@@ -21,7 +21,7 @@
 	if($o == "ts") {
 		$now      = date("Y-m-d H", strtotime("now"));
 		$twoweeks = date("Y-m-d H", strtotime("-2 weeks"));
-		$result = mysql_query("SELECT Time FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT Time FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks' ORDER BY Time asc", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			array_push($stack, date('n-j \a\t ga',strtotime($row["Time"])));
 		}
@@ -31,7 +31,7 @@
 		$now = date("Y-m-d H", strtotime("now"));
 		$yesterday = date("Y-m-d H", strtotime("-1 day"));
 		//Handle read request
-		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$yesterday'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$yesterday' ORDER BY Time asc", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$pre["Time"] = date('n-j \a\t ga',strtotime($row["Time"]));
 			$pre["Temp"] = $row["Temp"];
@@ -89,7 +89,7 @@
 		//Handle read request
 		$now      = date("Y-m-d H:m:s", strtotime("now"));
 		$month = date("Y-m-d H:m:s", strtotime("-1 month"));
-		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$month'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$month' ORDER BY Time asc", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$rowProcess["Temp"] = $row["Temp"];
 			$rowProcess["Time"] = date('n-j \a\t ga',strtotime($row["Time"]));
@@ -100,7 +100,7 @@
 		//Handle read request
 		$now      = date("Y-m-d H", strtotime("now"));
 		$twoweeks = date("Y-m-d H", strtotime("-2 weeks"));
-		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks'", $con) or die('Error: ' . mysql_error());
+		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$twoweeks' ORDER BY Time asc", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$rowProcess["Temp"] = $row["Temp"];
 			$rowProcess["Time"] = date('n-j \a\t ga',strtotime($row["Time"]));
