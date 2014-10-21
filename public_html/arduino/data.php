@@ -87,8 +87,8 @@
 		
 	} else if($o == "month") {
 		//Handle read request
-		$now      = date("Y-m-d H:m:s", strtotime("now"));
-		$month = date("Y-m-d H:m:s", strtotime("-1 month"));
+		$now      = date("Y-m-d H", strtotime("now"));
+		$month = date("Y-m-d H", strtotime("-1 month"));
 		$result = mysql_query("SELECT * FROM temperature WHERE RemoteNum = '$rptID' AND Time <= '$now' AND Time >= '$month' ORDER BY Time asc", $con) or die('Error: ' . mysql_error());
 		while($row = mysql_fetch_assoc($result)) {
 			$rowProcess["Temp"] = $row["Temp"];
