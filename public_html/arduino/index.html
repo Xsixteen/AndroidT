@@ -78,7 +78,7 @@
 		$(function () {
 			var r_time = [];
 
-			mkLineGraph("24h", "24h");
+			mkLineGraph("24h", "24h", 3);
 			mkStacked("avg", "monthstats");
 			avgTempArea("areaavg");
 			create2Wk("graph");
@@ -204,7 +204,7 @@
 
 			}
 
-			function mkLineGraph(el, params) {
+			function mkLineGraph(el, params, report) {
 				var outdoorTemp= [];
 				var outdoorTime= [];
 				var indoorTemp= [];
@@ -212,7 +212,7 @@
 
 				$.ajax({ 
 					dataType: "json",       
-					url: "./data.php?o="+params+"&rptID=1",
+					url: "./data.php?o="+params+"&rptID="+report,
 					async: false,
 					success: function(data) {
 

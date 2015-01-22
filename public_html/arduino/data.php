@@ -3,6 +3,12 @@
 	$temp = $_GET['TEMP'];
 	$stack = array();
 	$rptID = $_GET['rptID'];
+	$location = "http://api.wunderground.com/api/e1944763be1683a8/conditions/q/MI/Royal_oak.json";
+	
+	//handle console based requests.
+	if(isset($argv)) {
+		$o = $argv[1];
+	}
 
 	if(!isset($o) && !isset($temp)) {
 		die();
@@ -96,6 +102,21 @@
 			array_push($stack, $rowProcess);
 		}
 		echo json_encode($stack);
+	} else if ($o == "get_outsidetemp") {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $location);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$decoded_json = json_decode(curl_exec($ch),true);
+		curl_close($ch);
+		
+		$current_observation = $decoded_json['current_observation'];	
+                $temp_f = $current_observation['temp_f'];
+		if (!mysql_query("INSERT INTO temperature (Temp, Time, RemoteNum) VALUES($temp_f, NOW(), '3')")) {
+			die('Error: ' . mysql_error());
+		}
+
+		echo "OK";
+	
 	} else if(isset($o)) {
 		//Handle read request
 		$now      = date("Y-m-d H", strtotime("now"));
