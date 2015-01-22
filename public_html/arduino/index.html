@@ -136,7 +136,7 @@
 				//outdoor
 				$.ajax({ 
 					dataType: "json",	
-					url: "./data.php?o=month&rptID=1",
+					url: "./data.php?o=month&rptID=3",
 					async: false,
 					success: function(data) {
 						$.each(data, function(js) {
@@ -254,7 +254,7 @@
 						text: 'Recorded Temperatures'
 					},
 					xAxis: {
-						categories: indoorTime,
+						categories: outdoorTime,
 						labels: {
 						}
 					},
@@ -294,7 +294,7 @@
 
 				$.ajax({ 
 					dataType: "json",	
-					url: "./data.php?o="+params+"&rptID=1",
+					url: "./data.php?o="+params+"&rptID=3",
 					async: false,
 					success: function(data) {
 
@@ -356,7 +356,7 @@
 				//Outdoor
 				$.ajax({ 
 					dataType: "json",	
-					url: "./data.php?o=monthstats&rptID=1",
+					url: "./data.php?o=monthstats&rptID=3",
 					async: false,
 					success: function(data) {
 						$.each(data, function(js) {
@@ -405,7 +405,7 @@
 				//outdoor
 				$.ajax({ 
 					dataType: "json",	
-					url: "./data.php?o=true&rptID=1",
+					url: "./data.php?o=true&rptID=3",
 					async: false,
 					success: function(data) {
 						$.each(data, function(js) {
